@@ -24,19 +24,19 @@ mongoose.connect(mongoURI, {
 
 const app = express();
 app.set("view engine", "ejs");
-app.use(passport.initialize()); // these two execute code to get passport working
-app.use(passport.session()); //
+app.use(bodyParser.urlencoded({extended: true})); // initiate body-parser
 app.use(require("express-session")({
   secret: "Some set of words", // This is used to encode and decode the sessions
   resave: false, // This key:value is required
   saveUninitialized: false // This key:value is required
 }));
+app.use(passport.initialize()); // these two execute code to get passport working
+app.use(passport.session()); //
 
 passport.use(new LocalStrategy(User.authenticate()));
 passport.serializeUser(User.serializeUser()); // these two provide the logic to encode and decode the user string in the session
 passport.deserializeUser(User.deserializeUser());
 
-app.use(bodyParser.urlencoded({extended: true})); // initiate body-parser
 
 //======
 //ROUTES
@@ -47,8 +47,17 @@ app.get("/", (req, res) => {
     res.render("home");
 });
 
+// our middleware function to determine authentication status
+
+let isLoggedIn = (req, res, next) => {
+  if(req.isAuthenticated()){ // .isAuthenticated comes from Passport
+    return next(); // Returna and run next, which is the next piece whatever the route is. "If the user is logged in, keep going"
+  }
+  res.redirect("/login");
+};
+
 // Secret route
-app.get("/secret", (req, res) => {
+app.get("/secret", isLoggedIn, (req, res) => {
     res.render("secret");
 });
 
@@ -86,6 +95,12 @@ app.post("/login", passport.authenticate("local", {
     successRedirect: "/secret",
     failureRedirect: "/login"
     }), (req, res) => {
+});
+
+// Logout route
+app.get("/logout", (req, res) => {
+    req.logout();
+    res.redirect("/");
 });
 
 
