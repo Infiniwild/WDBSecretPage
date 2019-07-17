@@ -7,9 +7,9 @@ const   express = require("express"),
         passportLocalMongoose = require("passport-local-mongoose");
 
 // TODO
-// Part 2
-// - create a user model
-// - configure passport
+// Part 3
+// - add register routes
+// - add register form
 
 const mongoURI = "mongodb+srv://devidle:" + process.env.MDBauth + "@cluster0-jcmtm.mongodb.net/test?retryWrites=true&w=majority";
 mongoose.connect(mongoURI, {
@@ -35,6 +35,12 @@ app.use(require("express-session")({
 passport.serializeUser(User.serializeUser()); // these two provide the logic to encode and decode the user string in the session
 passport.deserializeUser(User.deserializeUser());
 
+app.use(bodyParser.urlencoded({extended: true})); // initiate body-parser
+
+//======
+//ROUTES
+//======
+
 // Root route
 app.get("/", (req, res) => {
     res.render("home");
@@ -43,6 +49,28 @@ app.get("/", (req, res) => {
 // Secret route
 app.get("/secret", (req, res) => {
     res.render("secret");
+});
+
+// Auth routes
+
+// Register get
+// Show the signup form
+app.get("/register", (req, res) => {
+    res.render("register");
+});
+
+// Register post
+// Submit the signup form
+app.post("/register", (req, res) => {
+    User.register(new User({username: req.body.username}), req.body.password, (err, user) => {
+    if(err){
+        console.log(err);
+        return res.render('register');
+    }
+    passport.authenticate("local")(req, res, () => {
+        res.redirect("/secret");
+        });
+    });
 });
 
 // Server start!
