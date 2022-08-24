@@ -8,14 +8,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Infiniwild/WDBSecretPage.git"
+    "url": "git+https://github.com/joshgamache/WDBSecretPage.git"
   },
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/Infiniwild/WDBSecretPage/issues"
+    "url": "https://github.com/joshgamache/WDBSecretPage/issues"
   },
-  "homepage": "https://github.com/Infiniwild/WDBSecretPage#readme",
+  "homepage": "https://github.com/joshgamache/WDBSecretPage#readme",
   "dependencies": {
     "body-parser": "^1.19.0",
     "ejs": "^2.6.2",
